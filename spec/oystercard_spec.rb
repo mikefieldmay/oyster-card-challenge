@@ -34,12 +34,14 @@ describe Oystercard do
     end
 
     context "top up limit" do
+      default_limit = described_class::DEFAULT_LIMIT
+      message = "Cannot top up above £#{default_limit}"
       it "has a limit of 90" do
-        expect { oystercard.top_up(91) }.to raise_error(RuntimeError, "Cannot top up above £90")
+        expect { oystercard.top_up(default_limit + 1) }.to raise_error(RuntimeError, message)
       end
-      it "will not exceed limit of £90" do
-        oystercard.top_up(90)
-        expect{oystercard.top_up(1)}.to raise_error(RuntimeError, "Cannot top up above £90")
+      it "will not exceed limit of £#{default_limit}" do
+        oystercard.top_up(default_limit)
+        expect{oystercard.top_up(1)}.to raise_error(RuntimeError, message)
       end
 
     end
