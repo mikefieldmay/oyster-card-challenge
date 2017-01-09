@@ -12,6 +12,13 @@ describe Oystercard do
       it {expect(oystercard.balance).to eq 0}
     end
 
+    context "specify balance" do
+      subject(:oystercard) { described_class.new(30)}
+
+      it { expect(oystercard.balance).to eq 30 }
+
+    end
+
   end
 
 end
