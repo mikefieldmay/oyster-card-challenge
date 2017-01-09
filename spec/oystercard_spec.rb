@@ -4,6 +4,10 @@ describe Oystercard do
 
   subject(:oystercard) { described_class.new }
 
+  it "responds to ::DEFAULT_LIMIT" do
+    expect(described_class).to be_const_defined(:DEFAULT_LIMIT)
+  end
+
   describe ".balance" do
 
     context "default balance" do
