@@ -1,7 +1,8 @@
 
 class Oystercard
 
-  attr_reader :balance
+  attr_reader :balance, :in_journey
+  alias_method :in_journey?, :in_journey
 
   DEFAULT_CREDIT_LIMIT = 90
   DEFAULT_DEBIT_LIMIT = 0

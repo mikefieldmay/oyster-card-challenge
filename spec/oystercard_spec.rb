@@ -73,4 +73,12 @@ describe Oystercard do
     end
   end
 
+  describe ".in_journey" do
+    it { is_expected.to respond_to(:in_journey?) }
+
+    context "is false for new cards" do
+      it { expect(oystercard.in_journey?).to eq false }
+    end
+  end
+
 end
