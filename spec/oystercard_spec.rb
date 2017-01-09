@@ -91,6 +91,14 @@ describe Oystercard do
       end
     end
 
+    context "if oystercard is in journey" do
+
+      it "raises an error" do
+        oystercard.touch_in
+        expect{oystercard.touch_in}.to raise_error
+      end
+    end
+
   end
 
 end
