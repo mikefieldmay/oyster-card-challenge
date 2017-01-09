@@ -10,7 +10,7 @@ class Oystercard
   end
 
   def top_up(amount)
-    raise "Cannot top up above £90" if amount >= 90
+    raise "Cannot top up above £#{DEFAULT_LIMIT}" if (balance + amount) > DEFAULT_LIMIT
     @balance += amount
   end
 

@@ -37,7 +37,10 @@ describe Oystercard do
       it "has a limit of 90" do
         expect { oystercard.top_up(91) }.to raise_error(RuntimeError, "Cannot top up above £90")
       end
-
+      it "will not exceed limit of £90" do
+        oystercard.top_up(90)
+        expect{oystercard.top_up(1)}.to raise_error(RuntimeError, "Cannot top up above £90")
+      end
 
     end
 
