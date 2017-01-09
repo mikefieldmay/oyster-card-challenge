@@ -16,6 +16,7 @@ class Oystercard
   end
 
   def deduct(deduct_amount)
+    raise "Cannot deduct below £#{DEFAULT_DEBIT_LIMIT}" if deduct_limit_reached?(deduct_amount)
     @balance -= deduct_amount
   end
 
@@ -25,4 +26,7 @@ class Oystercard
     (balance + top_up_amount) > DEFAULT_CREDIT_LIMIT
   end
 
+  def deduct_limit_reached?(deduct_amount)
+    (balance - deduct_amount) < DEFAULT_DEBIT_LIMIT
+  end
 end
