@@ -14,6 +14,10 @@ class Oystercard
     @balance += top_up_amount
   end
 
+  def deduct(deduct_amount)
+
+  end
+
   private
 
   def top_up_limit_reached?(top_up_amount)

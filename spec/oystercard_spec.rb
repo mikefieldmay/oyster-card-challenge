@@ -49,9 +49,16 @@ describe Oystercard do
   end
 
   describe ".deduct" do
-
+    subject(:oystercard) { described_class.new(40) }
     it { is_expected.to respond_to(:deduct).with(1).argument }
 
+    context "deducting from card" do
+
+      it "decreases the balance" do
+        oystercard.deduct(20)
+        expect(oystercard.balance).to eq 20
+      end
+    end
   end
 
 end
