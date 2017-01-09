@@ -4,8 +4,12 @@ describe Oystercard do
 
   subject(:oystercard) { described_class.new }
 
-  it "responds to ::DEFAULT_LIMIT" do
-    expect(described_class).to be_const_defined(:DEFAULT_LIMIT)
+  it "responds to ::DEFAULT_CREDIT_LIMIT" do
+    expect(described_class).to be_const_defined(:DEFAULT_CREDIT_LIMIT)
+  end
+
+  it "responds to ::DEFAULT_DEBIT_LIMIT" do
+    expect(described_class).to be_const_defined(:DEFAULT_DEBIT_LIMIT)
   end
 
   describe ".balance" do
@@ -34,7 +38,7 @@ describe Oystercard do
     end
 
     context "top up limit" do
-      default_limit = described_class::DEFAULT_LIMIT
+      default_limit = described_class::DEFAULT_CREDIT_LIMIT
       message = "Cannot top up above £#{default_limit}"
       it "has a limit of 90" do
         expect { oystercard.top_up(default_limit + 1) }.to raise_error(RuntimeError, message)
@@ -50,7 +54,6 @@ describe Oystercard do
 
   describe ".deduct" do
     subject(:oystercard) { described_class.new(40) }
-    it { is_expected.to respond_to(:deduct).with(1).argument }
 
     context "deducting from card" do
 
@@ -58,6 +61,15 @@ describe Oystercard do
         oystercard.deduct(20)
         expect(oystercard.balance).to eq 20
       end
+
+      context "debit limit" do
+        debit_limit = described_class::DEFAULT_DEBIT_LIMIT
+        message = "Cannot deduct below £#{debit_limit}"
+        it "won't deduct below #{debit_limit}" do
+          expect{oystercard.deduct(41)}.to raise_error(RuntimeError, message)
+        end
+      end
+
     end
   end
 
