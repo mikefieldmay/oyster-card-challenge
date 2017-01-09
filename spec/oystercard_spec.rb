@@ -81,4 +81,16 @@ describe Oystercard do
     end
   end
 
+  describe ".touch_in" do
+    it { is_expected.to respond_to(:touch_in)}
+
+    context "when touched in" do
+      it "changes in_journey? to true" do
+        oystercard.touch_in
+        expect(oystercard.in_journey?).to eq true
+      end
+    end
+
+  end
+
 end
