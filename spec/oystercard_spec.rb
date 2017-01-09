@@ -24,6 +24,15 @@ describe Oystercard do
   describe ".top_up" do
 
     it { is_expected.to respond_to(:top_up).with(1).argument }
+
+    context "topping up card" do
+
+      it "increases the balance" do
+        oystercard.top_up(30)
+        expect(oystercard.balance).to eq 30
+      end
+
+    end
   end
 
 end
