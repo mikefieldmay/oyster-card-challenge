@@ -5,6 +5,8 @@ describe Oystercard do
   subject(:oystercard) { described_class.new }
 
   let(:station) {instance_double("Station")}
+  let(:second_station) {instance_double("Station")}
+
 
   it "responds to ::DEFAULT_CREDIT_LIMIT" do
     expect(described_class).to be_const_defined(:DEFAULT_CREDIT_LIMIT)
@@ -121,7 +123,7 @@ describe Oystercard do
 
   describe "#touch_out" do
 
-    it { is_expected.to respond_to(:touch_out)}
+    it { is_expected.to respond_to(:touch_out).with(1).argument}
     minimum_fare = Oystercard::MINIMUM_FARE
 
     context "when oystercard is touched out" do
@@ -131,17 +133,17 @@ describe Oystercard do
       end
 
       it "changes in_journey to false" do
-        oystercard.touch_out
+        oystercard.touch_out(second_station)
         expect(oystercard.in_journey?).to eq false
       end
 
       it "reduces the balance by #{minimum_fare}" do
-        expect{oystercard.touch_out}.to change{oystercard.balance}.by (-minimum_fare)
+        expect{oystercard.touch_out(second_station)}.to change{oystercard.balance}.by (-minimum_fare)
       end
 
       it "raises an error if not in journey" do
-        oystercard.touch_out
-        expect{oystercard.touch_out}.to raise_error("Touched out already")
+        oystercard.touch_out(second_station)
+        expect{oystercard.touch_out(second_station)}.to raise_error("Touched out already")
       end
 
     end
@@ -165,6 +167,31 @@ describe Oystercard do
       end
     end
 
+    context "when not in_journey" do
+      it "returns nil for start_station" do
+        oystercard.touch_out(second_station)
+        expect(oystercard.start_station).to eq nil
+      end
+    end
+
   end
 
+  describe "#journeys" do
+    it{is_expected.to respond_to(:journeys)}
+
+    minimum_fare = Oystercard::MINIMUM_FARE
+
+    before do
+      oystercard.top_up(minimum_fare * 2)
+      oystercard.touch_in(station)
+    end
+
+    context "when touching out" do
+      it "should store journey" do
+          oystercard.touch_out(second_station)
+          expect(oystercard.journeys).to include([station,second_station])
+        end
+    end
+
+  end
 end

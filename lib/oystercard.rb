@@ -1,8 +1,8 @@
 
 class Oystercard
 
-  attr_reader :balance, :in_journey, :start_station
-  alias_method :in_journey?, :in_journey
+  attr_reader :balance, :in_journey, :start_station, :journeys
+  #alias_method :in_journey?, :in_journey
 
   DEFAULT_CREDIT_LIMIT = 90
   DEFAULT_DEBIT_LIMIT = 0
@@ -12,6 +12,11 @@ class Oystercard
     @balance = balance
     @in_journey = false
     @start_station
+    @journeys = []
+  end
+
+  def in_journey?
+    @start_station != nil
   end
 
   def top_up(top_up_amount)
@@ -19,16 +24,18 @@ class Oystercard
     @balance += top_up_amount
   end
 
-  def touch_in(station)
+  def touch_in(entry_station)
     raise "Touched in already" if in_journey?
     raise "Balance below minimum fare" if balance_below_minimum?
     @in_journey = true
-    @start_station = station
+    @start_station = entry_station
   end
 
-  def touch_out
+  def touch_out(exit_station)
     raise "Touched out already" unless in_journey?
+    journeys<<[start_station, exit_station]
     @in_journey = false
+    @start_station = nil
     deduct(MINIMUM_FARE)
   end
 
