@@ -4,6 +4,8 @@ describe Oystercard do
 
   subject(:oystercard) { described_class.new }
 
+  let(:station) {instance_double("Station")}
+
   it "responds to ::DEFAULT_CREDIT_LIMIT" do
     expect(described_class).to be_const_defined(:DEFAULT_CREDIT_LIMIT)
   end
@@ -90,11 +92,11 @@ describe Oystercard do
   describe ".touch_in" do
     subject(:oystercard) { described_class.new(Oystercard::MINIMUM_FARE+1) }
 
-    it { is_expected.to respond_to(:touch_in)}
+    it { is_expected.to respond_to(:touch_in).with(1).argument}
 
     context "when touched in" do
       it "changes in_journey? to true" do
-        oystercard.touch_in
+        oystercard.touch_in(station)
         expect(oystercard.in_journey?).to eq true
       end
     end
@@ -102,8 +104,8 @@ describe Oystercard do
     context "if oystercard is in journey" do
       message = "Touched in already"
       it "raises an error" do
-        oystercard.touch_in
-        expect{oystercard.touch_in}.to raise_error(message)
+        oystercard.touch_in(station)
+        expect{oystercard.touch_in(station)}.to raise_error(message)
       end
     end
 
@@ -111,7 +113,7 @@ describe Oystercard do
       subject(:oystercard) { described_class.new(Oystercard::MINIMUM_FARE-1) }
       message = "Balance below minimum fare"
       it 'raises an error' do
-        expect{oystercard.touch_in}.to raise_error(message)
+        expect{oystercard.touch_in(station)}.to raise_error(message)
       end
     end
 
@@ -125,7 +127,7 @@ describe Oystercard do
     context "when oystercard is touched out" do
       before do
         oystercard.top_up(minimum_fare * 2)
-        oystercard.touch_in
+        oystercard.touch_in(station)
       end
 
       it "changes in_journey to false" do
@@ -142,6 +144,25 @@ describe Oystercard do
         expect{oystercard.touch_out}.to raise_error("Touched out already")
       end
 
+    end
+
+  end
+
+  describe "#start_station" do
+
+    it { is_expected.to respond_to(:start_station)}
+
+    minimum_fare = Oystercard::MINIMUM_FARE
+
+    before do
+      oystercard.top_up(minimum_fare * 2)
+      oystercard.touch_in(station)
+    end
+
+    context "when in_journey " do
+      it "returns the start station" do
+        expect(oystercard.start_station).to eq station
+      end
     end
 
   end
