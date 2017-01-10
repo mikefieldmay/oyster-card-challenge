@@ -11,7 +11,7 @@ class Oystercard
   def initialize(balance = 0)
     @balance = balance
     @in_journey = false
-    @start_station
+    #@start_station
     @journeys = []
   end
 
