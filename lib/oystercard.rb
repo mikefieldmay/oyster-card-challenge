@@ -18,11 +18,6 @@ class Oystercard
     @balance += top_up_amount
   end
 
-  def deduct(deduct_amount)
-    raise "Cannot deduct below £#{DEFAULT_DEBIT_LIMIT}" if deduct_limit_reached?(deduct_amount)
-    @balance -= deduct_amount
-  end
-
   def touch_in
     raise "Touched in already" if in_journey?
     raise "Balance below minimum fare" if balance_below_minimum?
@@ -30,7 +25,9 @@ class Oystercard
   end
 
   def touch_out
+    raise "Touched out already" unless in_journey?
     @in_journey = false
+    deduct(MINIMUM_FARE)
   end
 
   private
@@ -46,4 +43,10 @@ class Oystercard
   def deduct_limit_reached?(deduct_amount)
     (balance - deduct_amount) < DEFAULT_DEBIT_LIMIT
   end
+
+  def deduct(deduct_amount)
+    raise "Cannot deduct below £#{DEFAULT_DEBIT_LIMIT}" if deduct_limit_reached?(deduct_amount)
+    @balance -= deduct_amount
+  end
+
 end

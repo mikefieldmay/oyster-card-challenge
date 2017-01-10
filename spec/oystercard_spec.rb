@@ -16,8 +16,6 @@ describe Oystercard do
     expect(described_class).to be_const_defined(:MINIMUM_FARE)
   end
 
-  #it "responds to ::"
-
   describe ".balance" do
 
     context "default balance" do
@@ -58,6 +56,7 @@ describe Oystercard do
 
   end
 
+=begin
   describe ".deduct" do
     subject(:oystercard) { described_class.new(40) }
 
@@ -78,6 +77,7 @@ describe Oystercard do
 
     end
   end
+=end
 
   describe ".in_journey" do
     it { is_expected.to respond_to(:in_journey?) }
@@ -120,14 +120,28 @@ describe Oystercard do
   describe "#touch_out" do
 
     it { is_expected.to respond_to(:touch_out)}
+    minimum_fare = Oystercard::MINIMUM_FARE
 
     context "when oystercard is touched out" do
-      it "changes in_journey to false" do
-        oystercard.top_up(Oystercard::MINIMUM_FARE)
+      before do
+        oystercard.top_up(minimum_fare * 2)
         oystercard.touch_in
+      end
+
+      it "changes in_journey to false" do
         oystercard.touch_out
         expect(oystercard.in_journey?).to eq false
       end
+
+      it "reduces the balance by #{minimum_fare}" do
+        expect{oystercard.touch_out}.to change{oystercard.balance}.by (-minimum_fare)
+      end
+
+      it "raises an error if not in journey" do
+        oystercard.touch_out
+        expect{oystercard.touch_out}.to raise_error("Touched out already")
+      end
+
     end
 
   end
