@@ -15,10 +15,6 @@ class Oystercard
     @journeys = []
   end
 
-  def in_journey?
-    @start_station != nil
-  end
-
   def top_up(top_up_amount)
     raise "Cannot top up above £#{DEFAULT_CREDIT_LIMIT}" if top_up_limit_reached?(top_up_amount)
     @balance += top_up_amount
@@ -27,19 +23,31 @@ class Oystercard
   def touch_in(entry_station)
     raise "Touched in already" if in_journey?
     raise "Balance below minimum fare" if balance_below_minimum?
-    @in_journey = true
-    @start_station = entry_station
+    start_journey(entry_station)
   end
 
   def touch_out(exit_station)
     raise "Touched out already" unless in_journey?
-    journeys<<[start_station, exit_station]
+    journeys<<{start_station: start_station, exit_station: exit_station}
+    end_journey
+  end
+
+  def in_journey?
+    @start_station != nil
+  end
+
+  private
+
+  def start_journey(entry_station)
+    @in_journey = true
+    @start_station = entry_station
+  end
+
+  def end_journey
     @in_journey = false
     @start_station = nil
     deduct(MINIMUM_FARE)
   end
-
-  private
 
   def balance_below_minimum?
     @balance < MINIMUM_FARE

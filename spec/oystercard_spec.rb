@@ -4,9 +4,8 @@ describe Oystercard do
 
   subject(:oystercard) { described_class.new }
 
-  let(:station) {instance_double("Station")}
-  let(:second_station) {instance_double("Station")}
-
+  let(:station) {instance_double(Station)}
+  let(:second_station) {instance_double(Station)}
 
   it "responds to ::DEFAULT_CREDIT_LIMIT" do
     expect(described_class).to be_const_defined(:DEFAULT_CREDIT_LIMIT)
@@ -179,6 +178,10 @@ describe Oystercard do
   describe "#journeys" do
     it{is_expected.to respond_to(:journeys)}
 
+    it "has an empty journeys array" do
+      expect(oystercard.journeys).to eq []
+    end
+
     minimum_fare = Oystercard::MINIMUM_FARE
 
     before do
@@ -189,9 +192,12 @@ describe Oystercard do
     context "when touching out" do
       it "should store journey" do
           oystercard.touch_out(second_station)
-          expect(oystercard.journeys).to include([station,second_station])
+          journey = {start_station: station, exit_station: second_station}
+          expect(oystercard.journeys).to include(journey)
         end
     end
 
   end
+
+
 end
