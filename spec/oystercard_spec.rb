@@ -12,6 +12,8 @@ describe Oystercard do
     expect(described_class).to be_const_defined(:DEFAULT_DEBIT_LIMIT)
   end
 
+  #it "responds to ::"
+
   describe ".balance" do
 
     context "default balance" do
@@ -92,10 +94,25 @@ describe Oystercard do
     end
 
     context "if oystercard is in journey" do
-
+      message = "Touched in already"
       it "raises an error" do
         oystercard.touch_in
-        expect{oystercard.touch_in}.to raise_error
+        expect{oystercard.touch_in}.to raise_error(message)
+      end
+    end
+
+  end
+
+  describe "#touch_out" do
+
+    it { is_expected.to respond_to(:touch_out)}
+
+    context "when oystercard is touched out" do
+      it "changes in_journey to false" do
+        oystercard.touch_in
+        oystercard.touch_out
+        expect(oystercard.in_journey?).to eq false
+
       end
     end
 

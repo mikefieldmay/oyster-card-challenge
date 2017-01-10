@@ -23,7 +23,12 @@ class Oystercard
   end
 
   def touch_in
+    raise "Touched in already" if in_journey?
     @in_journey = true
+  end
+
+  def touch_out
+    @in_journey = false
   end
 
   private
