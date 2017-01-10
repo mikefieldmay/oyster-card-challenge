@@ -12,6 +12,10 @@ describe Oystercard do
     expect(described_class).to be_const_defined(:DEFAULT_DEBIT_LIMIT)
   end
 
+  it "responds to ::MINIMUM_FARE" do
+    expect(described_class).to be_const_defined(:MINIMUM_FARE)
+  end
+
   #it "responds to ::"
 
   describe ".balance" do
@@ -84,6 +88,8 @@ describe Oystercard do
   end
 
   describe ".touch_in" do
+    subject(:oystercard) { described_class.new(Oystercard::MINIMUM_FARE+1) }
+
     it { is_expected.to respond_to(:touch_in)}
 
     context "when touched in" do
@@ -101,6 +107,14 @@ describe Oystercard do
       end
     end
 
+    context "if balance is less than MINIMUM_FARE" do
+      subject(:oystercard) { described_class.new(Oystercard::MINIMUM_FARE-1) }
+      message = "Balance below minimum fare"
+      it 'raises an error' do
+        expect{oystercard.touch_in}.to raise_error(message)
+      end
+    end
+
   end
 
   describe "#touch_out" do
@@ -109,10 +123,10 @@ describe Oystercard do
 
     context "when oystercard is touched out" do
       it "changes in_journey to false" do
+        oystercard.top_up(Oystercard::MINIMUM_FARE)
         oystercard.touch_in
         oystercard.touch_out
         expect(oystercard.in_journey?).to eq false
-
       end
     end
 

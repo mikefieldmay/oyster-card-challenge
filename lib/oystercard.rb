@@ -6,6 +6,7 @@ class Oystercard
 
   DEFAULT_CREDIT_LIMIT = 90
   DEFAULT_DEBIT_LIMIT = 0
+  MINIMUM_FARE = 1
 
   def initialize(balance = 0)
     @balance = balance
@@ -24,6 +25,7 @@ class Oystercard
 
   def touch_in
     raise "Touched in already" if in_journey?
+    raise "Balance below minimum fare" if balance_below_minimum?
     @in_journey = true
   end
 
@@ -32,6 +34,10 @@ class Oystercard
   end
 
   private
+
+  def balance_below_minimum?
+    @balance < MINIMUM_FARE
+  end
 
   def top_up_limit_reached?(top_up_amount)
     (balance + top_up_amount) > DEFAULT_CREDIT_LIMIT
