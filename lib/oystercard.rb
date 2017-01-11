@@ -21,15 +21,14 @@ class Oystercard
   end
 
   def touch_in(entry_station)
-    raise "Touched in already" if in_journey?
     raise "Balance below minimum fare" if balance_below_minimum?
-    start_journey(entry_station)
+    @journey = Journey.new(entry_station)
   end
 
   def touch_out(exit_station)
-    raise "Touched out already" unless in_journey?
-    journeys<<{start_station: start_station, exit_station: exit_station}
-    end_journey
+    @journey.end_journey(exit_station)
+    journeys<<{start_station: @journey.entry_station, exit_station: @journey.exit_station}
+    deduct(MINIMUM_FARE)
   end
 
   def in_journey?
@@ -43,11 +42,11 @@ class Oystercard
     @start_station = entry_station
   end
 
-  def end_journey
-    @in_journey = false
-    @start_station = nil
-    deduct(MINIMUM_FARE)
-  end
+  # def end_journey
+  #   @in_journey = false
+  #   @start_station = nil
+  #   deduct(MINIMUM_FARE)
+  # end
 
   def balance_below_minimum?
     @balance < MINIMUM_FARE
